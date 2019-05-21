@@ -15,7 +15,7 @@ conn = 'mongodb://localhost:27017'
 client = pymongo.MongoClient(conn)
 
 # connect database collection
-db = client.pga_data["collection2"]
+db = client.pga_data["collection4"]
 
 # create route that renders index.html template
 @app.route("/")
