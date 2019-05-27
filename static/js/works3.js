@@ -12,34 +12,16 @@ d3.json(url).then(function(data){
 //d3.json(url, function(data){
     
     //data is nested so we need to flatten the performance data
-    player_intro = [];
     var stats = [];
-    tournament_history = [];
 
     //add name key/value to each dict nested inside list and push dict to stats list
     data.forEach(function(d){
-        player_intro.push({
-            "name": d.player_intro['Player Name'],
-            "url": d.player_intro['photo_url']
-        })
-
         d.all_stat_var.map(d2 =>{
             d2["name"]= d["_id"];
             stats.push(d2);
-        })
-        
-        d.tournament_hist.map(d3 =>{
-            d3["name"] = d["_id"];
-            tournament_history.push(d3)
-        })
+        })        
     })
-    console.log('tournament history')
-    console.log(tournament_history)
-    
-    console.log('url')
-    console.log(player_intro)
 
-    console.log('unfiltered original data')
     console.log(stats)
 
     //edit data set
@@ -90,15 +72,14 @@ d3.json(url).then(function(data){
         }
     })
 
-    console.log('new filtered data')
     console.log(new_data)
+    console.log('name')
 
-
-    //get unique player names: long way for now
     const unique = (value, index, self) => {
         return self.indexOf(value) === index;
     }
     name_test = name_test.filter(unique).sort()
+    console.log(name_test)
 
 
     
@@ -133,10 +114,9 @@ d3.json(url).then(function(data){
     var compChart = dc.compositeChart('#line2')
     var nasdaqTable = dc.dataTable('.dc-data-table');
     var nasdaqCount = dc.dataCount('.dc-data-count');
-    var number_dis = dc.numberDisplay('#number')
-    //var testrow = dc.rowChart('#row_chart')
 
 
+    console.log(yearDim.group().top(10))
 
 // /////////////////////////////////////////////////////////////////////////
     // var ndx = crossfilter(...)
@@ -229,35 +209,35 @@ d3.json(url).then(function(data){
 
     
     
-    // function reduceAdd(p, v) {
-    //     p.distance_avg = p.distance_avg + v.distance_avg;
-    //     p.accuracy_avg = p.accuracy_avg + v.accuracy_avg;
-    //     p.count = p.count + 1;
-    //     p.d_avg = p.distance_avg / p.count;
-    //     p.a_avg = p.accuracy_avg / p.count;
-    //     return p;
-    // }
-    // function reduceRemove(p, v) {
-    //     p.distance_avg = p.distance_avg - v.distance_avg;
-    //     p.accuracy_avg = p.accuracy_avg - v.accuracy_avg;
-    //     p.count = p.count - 1;
-    //     p.d_avg = p.distance_avg / p.count;
-    //     p.a_avg = p.accuracy_avg / p.count;
-    //     return p;
-    // }
-    // function reduceInitial() {
-    //     return {
-    //         distance_avg: 0,
-    //         accuracy_avg: 0,
-    //         count: 0
-    //     };
-    // }
-
+    function reduceAdd(p, v) {
+        p.distance_avg = p.distance_avg + v.distance_avg;
+        p.accuracy_avg = p.accuracy_avg + v.accuracy_avg;
+        p.count = p.count + 1;
+        p.d_avg = p.distance_avg / p.count;
+        p.a_avg = p.accuracy_avg / p.count;
+        return p;
+    }
+    function reduceRemove(p, v) {
+        p.distance_avg = p.distance_avg - v.distance_avg;
+        p.accuracy_avg = p.accuracy_avg - v.accuracy_avg;
+        p.count = p.count - 1;
+        p.d_avg = p.distance_avg / p.count;
+        p.a_avg = p.accuracy_avg / p.count;
+        return p;
+    }
+    function reduceInitial() {
+        return {
+            distance_avg: 0,
+            accuracy_avg: 0,
+            count: 0
+        };
+    }
+ 
     
-    // // var bla = distanceDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
-    // var bla = playerDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
-    // //console.log('bla')
-    // //console.log(bla.all())
+    // var bla = distanceDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
+    var bla = playerDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
+    console.log('bla')
+    console.log(bla.all())
     
 
     function order_group(group, order) {
@@ -277,39 +257,26 @@ d3.json(url).then(function(data){
 
     var filteredGroup = order_group(bla2)
 
-    function reduceAdd(p, v) {
-        ++p.count;
-        p.d_total += v.distance_avg;
-        p.a_total += v.accuracy_avg;
-        return p;
-        }
-    
-        function reduceRemove(p, v) {
-        --p.count;
-        p.d_total -= v.distance_avg;
-        p.a_total -= v.accuracy_avg;
-        return p;
-        }
-    
-        function reduceInitial() {
-        return {count: 0, d_total: 0, a_total: 0};
-        }
 
-    function remove_empty_bins(source_group) {
-        return {
-            all:function () {
-                return source_group.all().filter(function(d) {
-                    //return Math.abs(d.value) > 0.00001; // if using floating-point numbers
-                    return d.value !== 0; // if integers only
-                });
-            }
-        };
-    }
+    // finalChart
+    //     .renderArea(true)
+    //     .width(1600)
+    //     .height(400)
+    //     .transitionDuration(1000)
+    //     .margins({top: 30, right: 50, bottom: 25, left: 60})
+    //     .x(d3.scaleLinear().domain([220,330]))
+    //     .y(d3.scaleLinear().domain([0,100]))
+    //     .dimension(distanceDim)
+    //     .group(bla)
+    //     .valueAccessor(function (d) {
+    //         return d.value.a_avg;
+    //     })
+    //     .mouseZoomable(true)
+    //     .elasticY(false)
+    //     .renderHorizontalGridLines(true)
 
-    var group_reduce2 = playerDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
-    var group_reduce3 = remove_empty_bins(group_reduce2)
-    console.log("works?")
- 
+    console.log(bla2.all())
+    console.log(bla3.all())
     compChart
         .width(1600)
         .height(400)
@@ -319,9 +286,9 @@ d3.json(url).then(function(data){
         .mouseZoomable(false)
         .shareTitle(false)
         //.x(d3.scaleTime().domain([new Date(1979, 0, 0), new Date(2020, 0, 0)])) 
-        .x(d3.scaleBand().domain(playerDim.group().all().map(function(d){return d['key']}))) // Need empty val to offset first value
+        .x(d3.scaleBand().domain(name_test)) // Need empty val to offset first value
         .xUnits(dc.units.ordinal)   
-        .y(d3.scaleLinear().domain([0,100]))
+        .y(d3.scaleLinear().domain([0,5000]))
         .elasticY(false)
         .renderHorizontalGridLines(true)
         .legend(dc.legend().x(90).y(300).itemHeight(30).gap(10))
@@ -329,28 +296,28 @@ d3.json(url).then(function(data){
         
         .compose([
             dc.lineChart(compChart)
-                .group(group_reduce3, "Yearly Average Distance")
-                .valueAccessor(function (p) {
-                    return p.value.count ? p.value.d_total / p.value.count : 0;
-                })
-                //.group(bla2)
+                // .group(bla, "Yearly Average Distance")
+                // .valueAccessor(function (d) {
+                //     return d.value.d_avg;
+                // })
+                .group(bla2)
                 .ordinalColors(["orange"])
                 .useRightYAxis(true)
                 .renderArea(true),
 
             dc.lineChart(compChart)
-                .group(group_reduce3, "Yearly Average Accuracy")
-                .valueAccessor(function (p) {
-                    return p.value.count ? p.value.a_total / p.value.count : 0;
-                })
-                //.group(bla3)
+                // .group(bla, "Yearly Average Accuracy")
+                // .valueAccessor(function (d) {
+                //     return d.value.a_avg;
+                // })
+                .group(bla3)
                 .renderArea(true)
         ])
         .yAxisLabel("Accuracy Average")
         .rightYAxisLabel("Distance Average")
         .renderHorizontalGridLines(true)
-        
-        
+
+
 
 
     nasdaqCount /* dc.dataCount('.dc-data-count', 'chartGroup'); */
@@ -362,10 +329,10 @@ d3.json(url).then(function(data){
             all: 'All records selected. Please click on the graph to apply filters.'
         });
 
-    
+    amazing = []
     nasdaqTable /* dc.dataTable('.dc-data-table', 'chartGroup') */
         .dimension(distanceDim)
-        // .section(d => {amazing.push(d.name)})
+        .section(d => {amazing.push(d.name)})
         .columns([
             'name',
             {
@@ -378,114 +345,18 @@ d3.json(url).then(function(data){
             'accuracy_avg',
 
         ])
-        .endSlice(10)
         .order(d3.descending)
         .on('renderlet', function (table) {
             table.selectAll('.dc-table-group').classed('info', true);
         });
 
-
-   
-//////////////////////////////////////////////////////////////////////////////////////////
-    // function reduceAdd(p, v) {
-    // ++p.count;
-    // p.d_total += v.distance_avg;
-    // p.a_total += v.accuracy_avg;
-    // return p;
-    // }
-
-    // function reduceRemove(p, v) {
-    // --p.count;
-    // p.d_total -= v.distance_avg;
-    // p.a_total -= v.accuracy_avg;
-    // return p;
-    // }
-
-    // function reduceInitial() {
-    // return {count: 0, d_total: 0, a_total: 0};
-    // }
-
-    var group_reduce = ndx.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial);
-
-
-    number_dis
-        .formatNumber(d3.format(".3s"))
-        .group(group_reduce)
-        .valueAccessor(function(p) { 
-            return p.count ? p.a_total / p.count : 0;
-        })
-        // .formatNumber(d3.format(".3g"));
-/////////////////////////////////////////////////////////
-    // testrow
-    //     .height(300)
-    //     .width(1000)
-    //     .margins({
-    //         top: 10,
-    //         right: 10,
-    //         bottom: 40,
-    //         left: 10
-    //     })
-    //     //.dimension(playerDim)
-    //     .dimension(playerDim)
-    //     .group(col1DimTotal)
-    //     .valueAccessor(function(p) { 
-    //         return p.value.d_avg;
-    //     })
-    //     .data(function(group){return group.top(10)})
-    
-    
-    d3.select('#download')
-        .on('click', function() {
-        var data = distanceDim.top(10);
-
-        data = data.sort(function(a, b) {
-            return nasdaqTable.order()(nasdaqTable.sortBy()(a), nasdaqTable.sortBy()(b));
-        });
-
-        data = data.map(function(d) {
-            var row = {};
-            nasdaqTable.columns().forEach(function(c) {
-                row[nasdaqTable._doColumnHeaderFormat(c)] = nasdaqTable._doColumnValueFormat(c, d);
-            });
-            return row;
-        });
-
-        final = []
-        data.forEach(function(d){
-            final.push({
-                "name": d['Name'],
-                "year": d['Year'],
-            })
-        })
-        //console.log(final)
-    });
+        
+        console.log(amazing)
     
     dc.renderAll()
 
-    //test filter
-    //////////////////////////
-    test1 = "Trahan, D.J."
-    test2 = "2016"
 
-    var result = stats.filter(d => {
-        return d.name == test1 && d.year == test2
-    })
-
-    var result2 = tournament_history.filter(d => {
-        return d.name == test1
-    })
-
-    
-    var result3 = player_intro.filter(d => {
-        return d.name == test1
-    })
-
-    console.log(result[0])
-    console.log(result2)
-    console.log(result3)
-
-    //////////////////////////
-
+    console.log(distanceGroup.top(25))
 
 
 
@@ -493,4 +364,3 @@ d3.json(url).then(function(data){
 
 
 });
-

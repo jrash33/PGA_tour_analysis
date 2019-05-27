@@ -35,8 +35,6 @@ d3.json(url).then(function(response) {
                 .append('div')
                 .text(joey + " : " + player_name_2)
                 .style("font-size", "15px")
-            
-            
             }
         }
     })

@@ -277,39 +277,7 @@ d3.json(url).then(function(data){
 
     var filteredGroup = order_group(bla2)
 
-    function reduceAdd(p, v) {
-        ++p.count;
-        p.d_total += v.distance_avg;
-        p.a_total += v.accuracy_avg;
-        return p;
-        }
-    
-        function reduceRemove(p, v) {
-        --p.count;
-        p.d_total -= v.distance_avg;
-        p.a_total -= v.accuracy_avg;
-        return p;
-        }
-    
-        function reduceInitial() {
-        return {count: 0, d_total: 0, a_total: 0};
-        }
 
-    function remove_empty_bins(source_group) {
-        return {
-            all:function () {
-                return source_group.all().filter(function(d) {
-                    //return Math.abs(d.value) > 0.00001; // if using floating-point numbers
-                    return d.value !== 0; // if integers only
-                });
-            }
-        };
-    }
-
-    var group_reduce2 = playerDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
-    var group_reduce3 = remove_empty_bins(group_reduce2)
-    console.log("works?")
- 
     compChart
         .width(1600)
         .height(400)
@@ -319,9 +287,9 @@ d3.json(url).then(function(data){
         .mouseZoomable(false)
         .shareTitle(false)
         //.x(d3.scaleTime().domain([new Date(1979, 0, 0), new Date(2020, 0, 0)])) 
-        .x(d3.scaleBand().domain(playerDim.group().all().map(function(d){return d['key']}))) // Need empty val to offset first value
+        .x(d3.scaleBand().domain(name_test)) // Need empty val to offset first value
         .xUnits(dc.units.ordinal)   
-        .y(d3.scaleLinear().domain([0,100]))
+        .y(d3.scaleLinear().domain([0,5000]))
         .elasticY(false)
         .renderHorizontalGridLines(true)
         .legend(dc.legend().x(90).y(300).itemHeight(30).gap(10))
@@ -329,28 +297,28 @@ d3.json(url).then(function(data){
         
         .compose([
             dc.lineChart(compChart)
-                .group(group_reduce3, "Yearly Average Distance")
-                .valueAccessor(function (p) {
-                    return p.value.count ? p.value.d_total / p.value.count : 0;
-                })
-                //.group(bla2)
+                // .group(bla, "Yearly Average Distance")
+                // .valueAccessor(function (d) {
+                //     return d.value.d_avg;
+                // })
+                .group(bla2)
                 .ordinalColors(["orange"])
                 .useRightYAxis(true)
                 .renderArea(true),
 
             dc.lineChart(compChart)
-                .group(group_reduce3, "Yearly Average Accuracy")
-                .valueAccessor(function (p) {
-                    return p.value.count ? p.value.a_total / p.value.count : 0;
-                })
-                //.group(bla3)
+                // .group(bla, "Yearly Average Accuracy")
+                // .valueAccessor(function (d) {
+                //     return d.value.a_avg;
+                // })
+                .group(bla3)
                 .renderArea(true)
         ])
         .yAxisLabel("Accuracy Average")
         .rightYAxisLabel("Distance Average")
         .renderHorizontalGridLines(true)
-        
-        
+
+
 
 
     nasdaqCount /* dc.dataCount('.dc-data-count', 'chartGroup'); */
@@ -387,23 +355,23 @@ d3.json(url).then(function(data){
 
    
 //////////////////////////////////////////////////////////////////////////////////////////
-    // function reduceAdd(p, v) {
-    // ++p.count;
-    // p.d_total += v.distance_avg;
-    // p.a_total += v.accuracy_avg;
-    // return p;
-    // }
+    function reduceAdd(p, v) {
+    ++p.count;
+    p.d_total += v.distance_avg;
+    p.a_total += v.accuracy_avg;
+    return p;
+    }
 
-    // function reduceRemove(p, v) {
-    // --p.count;
-    // p.d_total -= v.distance_avg;
-    // p.a_total -= v.accuracy_avg;
-    // return p;
-    // }
+    function reduceRemove(p, v) {
+    --p.count;
+    p.d_total -= v.distance_avg;
+    p.a_total -= v.accuracy_avg;
+    return p;
+    }
 
-    // function reduceInitial() {
-    // return {count: 0, d_total: 0, a_total: 0};
-    // }
+    function reduceInitial() {
+    return {count: 0, d_total: 0, a_total: 0};
+    }
 
     var group_reduce = ndx.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial);
 
