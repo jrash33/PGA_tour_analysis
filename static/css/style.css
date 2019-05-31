@@ -5,10 +5,11 @@
   text-align: center;
   padding-top: 63px;
   padding-bottom: 63px;
-  height: 310px;
+  height: 350px;
   line-height: normal;
   position: relative;
   left: 100px;
+  bottom: -40px;
 }
 
 #numbera{
@@ -18,12 +19,24 @@
   text-align: center;
   padding-top: 63px;
   padding-bottom: 63px;
-  height: 310px;
+  height: 350px;
   line-height: normal;
   position: relative;
   left: 50px;
+  bottom: -40px;
 }
 
+#numbera:before {
+  content: "Accuracy (%) ";
+  font-size: 40px;
+  font-weight: bold;
+}
+
+#numberd:before {
+  content: "Distance (yds) ";
+  font-size: 40px;
+  font-weight: bold;
+}
 
 .button1{
   padding: 10px 24px;
@@ -31,6 +44,11 @@
   height: 70px;
   text-align: center;
   font-size: 30px;
+  font-weight: bold;
+}
+
+#line2, #distance, #plot{
+  font-size: 17px;
   font-weight: bold;
 }
 

@@ -198,7 +198,7 @@ d3.json(url).then(function(data){
         //.elasticX(true)
         .centerBar(true)
         .gap(6)
-        .xAxisLabel('Driving Distance')
+        .xAxisLabel('Driving Distance (yds)')
         .yAxisLabel('Number of Players')
         .margins({top: 10, right: 26, bottom: 50, left: 50})
         .round(dc.round.floor)
@@ -316,7 +316,7 @@ d3.json(url).then(function(data){
         .width(1600)
         .height(250)
         .transitionDuration(1000)
-        .margins({top: 30, right: 50, bottom: 25, left: 60})
+        .margins({top: 0, right: 50, bottom: 40, left: 25})
         .dimension(playerDim)
         .mouseZoomable(false)
         .shareTitle(false)
@@ -349,8 +349,10 @@ d3.json(url).then(function(data){
                 .renderArea(true)
         ])
         .yAxisLabel("Accuracy Average")
+        .xAxisLabel('Players')
         .rightYAxisLabel("Distance Average")
         .renderHorizontalGridLines(true)
+        //.margins().bottom = -5;
         
         
 
@@ -417,6 +419,7 @@ d3.json(url).then(function(data){
         .valueAccessor(function(p) { 
             return p.count ? p.d_total / p.count : 0;
         })
+    
         //.formatNumber(d3.format(".3g"));
 
     number_acc
@@ -501,10 +504,7 @@ d3.json(url).then(function(data){
                 }
             }
 
-            console.log("card display")
-            console.log(card_display_data)
-
-            function help(d){
+            function more_stats(d){
                 x=""
                 for (var key in d) {
                     x = x + key + ": " + d[key] + "<br>"
@@ -512,12 +512,21 @@ d3.json(url).then(function(data){
                 return(x)
             }
 
-            console.log(help(card_display_data))
-
             //tournament history
             var tourney = tournament_history.filter(function(d) {
                 return d.name == name;
             })
+
+            y=""
+
+            for(i=0; i<tourney.length; i++){
+                if(i <= 5){
+                y = y + "<tr><td>"+tourney[i].Date+'</td><td>'+tourney[i]['Tournament Name']+'</td><td>'+
+                    tourney[i]['Total Score']+'</td><td>'+tourney[i].POS+ "</td></tr>"
+                }
+            }
+
+            console.log(y)
 
             console.log('url')
             console.log(pic_url)
@@ -525,8 +534,6 @@ d3.json(url).then(function(data){
             console.log(additional_info)
             console.log('tourney')
             console.log(tourney)
-
-            y="<table><tr><th>Firstname</th><th>Lastname</th><th>Age</th></tr><tr><td>Jill</td><td>Smith</td><td>50</td</tr><tr><td>Eve</td><td>Jackson</td><td>94</td</tr>"
 
             d3.select('#player_cards')
                 .append('div')
@@ -538,10 +545,11 @@ d3.json(url).then(function(data){
                 .attr('class', 'row')
                 .html(
                     "<div class='col-lg-2'><img src=" + "'" + pic_url + "'" + "width='200'></div>"
-                + "<div id=player_name class='col-lg-2'><h2>Additional Info</h2><hr>Player Name:  "+name+"<br> Year:  " + year +
-                "<br> "+ help(card_display_data) +
+                + "<div id=player_name class='col-lg-3'><h2>Additional Info</h2><hr>Player Name:  "+name+"<br> Year:  " + year +
+                "<br> "+ more_stats(card_display_data) +
                 "</div>"
-                + "<div id=player_name class='col-lg-8'><h2>Recent Tournament Play</h2><hr>" + y +" </div>"
+                + "<div id=player_name class='col-lg-7'><h2>Recent Tournament Play</h2><hr>" + 
+                "<table><tr><th>Date</th><th>Tournament Name</th><th>Total Score</th><th>POS</th></tr>" + y +" </div>"
                 )
             
         })
@@ -565,7 +573,7 @@ d3.json(url).then(function(data){
 
     //test filter
     //////////////////////////
-    console.log("FINAL8");
+    console.log("FINAL2");
     // test1 = "Trahan, D.J.";
     // test2 = "2016";
     // url="https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_52372.png"
