@@ -57,7 +57,8 @@ d3.json(url).then(function(data){
             d['Possible Fairways'] = parseFloat(d['Possible Fairways'].replace(/,/g, ''))
             d['Fairways Hit'] = parseFloat(d['Fairways Hit'].replace(/,/g, ''))
 
-            if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 < 40){
+            if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 < 40 &&
+                +d['Fairways Hit'] / +d['Possible Fairways'] * 100 > 0){
                 var accuracy_avg_var = "<40%"}
             else if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 >= 40 &&
                     +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 50){
@@ -83,8 +84,8 @@ d3.json(url).then(function(data){
                             "total_drives": +d['Total Drives'],
                             'possible_fairways': +d['Possible Fairways'],
                             'fairways_hit': +d['Fairways Hit'],
-                            'distance_avg': +d['Total Distance'] / +d['Total Drives'],
-                            'accuracy_avg': +d['Fairways Hit'] / +d['Possible Fairways'] * 100,
+                            'distance_avg': +(+d['Total Distance'] / +d['Total Drives']).toFixed(2),
+                            'accuracy_avg': +(+d['Fairways Hit'] / +d['Possible Fairways'] * 100).toFixed(2),
                             'accuracy_group': accuracy_avg_var
                             })
         }
@@ -133,7 +134,8 @@ d3.json(url).then(function(data){
     var compChart = dc.compositeChart('#line2')
     var nasdaqTable = dc.dataTable('.dc-data-table');
     var nasdaqCount = dc.dataCount('.dc-data-count');
-    var number_dis = dc.numberDisplay('#number')
+    var number_dis = dc.numberDisplay('#numberd')
+    var number_acc = dc.numberDisplay('#numbera')
     //var testrow = dc.rowChart('#row_chart')
 
 
@@ -178,16 +180,16 @@ d3.json(url).then(function(data){
 
 
     accgroupChart
-      .width(500)
-      .height(400)
+      .width(400)
+      .height(250)
       .dimension(accgroupDim)
       .group(accgroupGroup)
       .innerRadius(40)
     
 
     distanceChart
-        .width(1200)
-        .height(450)
+        .width(1050)
+        .height(300)
         .dimension(distanceDim)
         .group(distanceGroup)
         .x(d3.scaleLinear().domain([230,330]))
@@ -195,7 +197,7 @@ d3.json(url).then(function(data){
         //.elasticY(true)
         //.elasticX(true)
         .centerBar(true)
-        .gap(8)
+        .gap(6)
         .xAxisLabel('Driving Distance')
         .yAxisLabel('Number of Players')
         .margins({top: 10, right: 26, bottom: 50, left: 50})
@@ -203,8 +205,8 @@ d3.json(url).then(function(data){
 
 
     yearChart
-        .width(1500)
-        .height(200)
+        .width(1600)
+        .height(150)
         .dimension(yearDim)
         .group(yearGroup)
         .x(d3.scaleTime().domain([new Date(1979, 0, 0), new Date(2020, 0, 0)]))  
@@ -308,11 +310,11 @@ d3.json(url).then(function(data){
 
     var group_reduce2 = playerDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
     var group_reduce3 = remove_empty_bins(group_reduce2)
-    console.log("works?")
+   
  
     compChart
         .width(1600)
-        .height(400)
+        .height(250)
         .transitionDuration(1000)
         .margins({top: 30, right: 50, bottom: 25, left: 60})
         .dimension(playerDim)
@@ -357,10 +359,11 @@ d3.json(url).then(function(data){
         .crossfilter(ndx)
         .groupAll(all)
         .html({
-            some: '<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
-                ' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'>Reset All</a>',
-            all: 'All records selected. Please click on the graph to apply filters.'
+            some: '<h1 class="text-center"><strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
+                ' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'>Reset All</a></h1><hr>',
+            all: '<h1> All records selected. Please click on the graph to apply filters.</h1><hr><br>'
         });
+        //<h3 class="text-center">Thumbnails</h3>
 
     
     nasdaqTable /* dc.dataTable('.dc-data-table', 'chartGroup') */
@@ -412,9 +415,18 @@ d3.json(url).then(function(data){
         .formatNumber(d3.format(".3s"))
         .group(group_reduce)
         .valueAccessor(function(p) { 
+            return p.count ? p.d_total / p.count : 0;
+        })
+        //.formatNumber(d3.format(".3g"));
+
+    number_acc
+        .formatNumber(d3.format(".3s"))
+        .group(group_reduce)
+        .valueAccessor(function(p) { 
             return p.count ? p.a_total / p.count : 0;
         })
-        // .formatNumber(d3.format(".3g"));
+        //.formatNumber(d3.format(".3g"));
+
 /////////////////////////////////////////////////////////
     // testrow
     //     .height(300)
@@ -436,6 +448,10 @@ d3.json(url).then(function(data){
     
     d3.select('#download')
         .on('click', function() {
+
+        //first clear html
+        d3.select("#player_cards").html("");
+
         var data = distanceDim.top(10);
 
         data = data.sort(function(a, b) {
@@ -457,37 +473,136 @@ d3.json(url).then(function(data){
                 "year": d['Year'],
             })
         })
-        //console.log(final)
+        console.log('table names')
+        console.log(final)
+
+        final.forEach(function(d){
+            var name = d.name
+            var year = d.year
+
+            //player picture
+            var index_url = player_intro.findIndex(d => d.name == name)
+            var pic_url = player_intro[index_url].url
+
+            if (pic_url == "none"){
+                var pic_url = "https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_29936.png"
+            }
+
+            //additional info
+            var index = stats.findIndex(d => d.name == name && d.year == year)
+            var additional_info = stats[index]
+
+            wanted_data = ["Club Head Speed","Total Drives","Possible Fwys","Distance from Edge of Fairway","Left Rough Tendency","Right Rough Tendency","Measured Rounds"]
+            card_display_data = {}
+            for(i=0; i<wanted_data.length; i++){
+                if(typeof(additional_info[wanted_data[i]]) != "undefined"){
+                    console.log("undefined!");
+                    card_display_data[wanted_data[i]] = String(additional_info[wanted_data[i]]);
+                }
+            }
+
+            console.log("card display")
+            console.log(card_display_data)
+
+            function help(d){
+                x=""
+                for (var key in d) {
+                    x = x + key + ": " + d[key] + "<br>"
+                }
+                return(x)
+            }
+
+            console.log(help(card_display_data))
+
+            //tournament history
+            var tourney = tournament_history.filter(function(d) {
+                return d.name == name;
+            })
+
+            console.log('url')
+            console.log(pic_url)
+            console.log('additional info')
+            console.log(additional_info)
+            console.log('tourney')
+            console.log(tourney)
+
+            y="<table><tr><th>Firstname</th><th>Lastname</th><th>Age</th></tr><tr><td>Jill</td><td>Smith</td><td>50</td</tr><tr><td>Eve</td><td>Jackson</td><td>94</td</tr>"
+
+            d3.select('#player_cards')
+                .append('div')
+                .attr("id","player_views")
+                .attr("class", "card border-primary mb-3")
+                .append('div')
+                .attr('class','card-body')
+                .append('div')
+                .attr('class', 'row')
+                .html(
+                    "<div class='col-lg-2'><img src=" + "'" + pic_url + "'" + "width='200'></div>"
+                + "<div id=player_name class='col-lg-2'><h2>Additional Info</h2><hr>Player Name:  "+name+"<br> Year:  " + year +
+                "<br> "+ help(card_display_data) +
+                "</div>"
+                + "<div id=player_name class='col-lg-8'><h2>Recent Tournament Play</h2><hr>" + y +" </div>"
+                )
+            
+        })
+
+        // var index = stats.findIndex(d => d.name == "Woods, Tiger" && d.year == "2004")
+        // console.log(stats[index])
+
+        // var index_tourney = tournament_history.findIndex(d => d.name == "Woods, Tiger")
+        // console.log(tournament_history[index_tourney])
+
+        // var index_tourney = tournament_history.filter(function(d) {
+        //     return d.name == "Woods, Tiger";
+        // })
+        
+        // var index_url = player_intro.findIndex(d => d.name == "Woods, Tiger")
+        // console.log(player_intro[index_url])
+
     });
     
     dc.renderAll()
 
     //test filter
     //////////////////////////
-    test1 = "Trahan, D.J."
-    test2 = "2016"
+    console.log("FINAL8");
+    // test1 = "Trahan, D.J.";
+    // test2 = "2016";
+    // url="https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_52372.png"
+    // date_ = "1/11/17";
+    // pos = "T25";
+    // score = "+10";
+    // tourney =  "The Bahamas Great Exuma Classic at Sandals Emerald Bay";
 
-    var result = stats.filter(d => {
-        return d.name == test1 && d.year == test2
-    })
+    // var result = stats.filter(d => {
+    //     return d.name == test1 && d.year == test2
+    // })
 
-    var result2 = tournament_history.filter(d => {
-        return d.name == test1
-    })
+    // var result2 = tournament_history.filter(d => {
+    //     return d.name == test1
+    // })
 
     
-    var result3 = player_intro.filter(d => {
-        return d.name == test1
-    })
+    // var result3 = player_intro.filter(d => {
+    //     return d.name == test1
+    // })
 
-    console.log(result[0])
-    console.log(result2)
-    console.log(result3)
+    // console.log(result[0])
+    // console.log(result2)
+    // console.log(result3)
+
+    // d3.select('.card-body')
+    //     .append('div')
+    //     .attr("id","player_views")
+    //     .attr("class", "row")
+    //     .html(
+    //         "<div class='col-lg-2'><img src=" + "'" + url + "'" + "width='150'></div>"
+    //     + "<div id=player_name class='col-lg-5'><h2>Additional Info</h2><hr>Player Name:  "+test1+"<br> Year:  " + test2 +"<br></div>"
+    //     + "<div id=player_name class='col-lg-5'><h2>Recent Tournament Play</h2><hr>Player Name:  "+test1+"<br> Year:  " + test2 +"<br></div>"
+    //     )
+    
 
     //////////////////////////
-
-
-
 
 
 
