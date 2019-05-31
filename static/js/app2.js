@@ -72,7 +72,8 @@ d3.json(url).then(function(data){
             else if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 > 70 &&
                     +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 80){
                 var accuracy_avg_var = "70%-80%"}
-            else{
+            else if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 > 80 &&
+                    +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 100){
                 var accuracy_avg_var = ">80%"
             }
 
@@ -217,9 +218,9 @@ d3.json(url).then(function(data){
         .centerBar(true)
         .gap(-30)
         .xAxisLabel('Year')
-        .yAxisLabel('Number of Players')
+        .yAxisLabel('# Players')
         .margins({top: 10, right: 26, bottom: 50, left: 50})
-        
+    
 
      var bla2 = playerDim.group().reduceSum(function (d) {
         return d.distance_avg;
@@ -573,7 +574,7 @@ d3.json(url).then(function(data){
 
     //test filter
     //////////////////////////
-    console.log("FINAL2");
+    console.log("FINAL!!");
     // test1 = "Trahan, D.J.";
     // test2 = "2016";
     // url="https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_52372.png"
