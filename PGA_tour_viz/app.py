@@ -15,22 +15,6 @@ from pymongo import MongoClient
 app = Flask(__name__)
 
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '') or "sqlite:///db.sqlite"
-# db = SQLAlchemy(app)
-
-#ATTEMPT FOR HEROKU DEPLOYMENT#########################
-MONGODB_URL = os.environ.get("MONGODB_URL")
-client = pymongo.MongoClient(MONGODB_URL)
-#db = client.pga_data['collection5']
-
-#######################################################
-# app.config['MONGO_URI'] = os.environ.get("MONGODB_URL", '')
-# db = SQLAlchemy(app)
-
-# app.config["MONGO_URI"] = os.environ.get("MONGODB_URL", 'mongodb://localhost:27017/pga_data') or "pga_viz.json"
-# db = PyMongo(app)
-
-
 
 # Create connection variable
 conn = 'mongodb://localhost:27017'
@@ -40,9 +24,6 @@ client = pymongo.MongoClient(conn)
 
 # connect database collection
 db = client.test_db['pga']
-
-
-
 
 #############################################OLD WAY
 # # Create connection variable
@@ -61,26 +42,15 @@ def pga_data():
 
     return render_template("index.html")
 
-
 @app.route("/data")
 def data():
-
-    pga_data_all = db.collection.find_one()
+  
+    pga_data_all = db.find()
     player_intro = []
     for player in pga_data_all:
         player_intro.append(player)
 
-    return jsonify(player_intro)    
-
-# @app.route("/data")
-# def data():
-  
-#     pga_data_all = db.find()
-#     player_intro = []
-#     for player in pga_data_all:
-#         player_intro.append(player)
-
-#     return jsonify(player_intro)
+    return jsonify(player_intro)
 
 
 if __name__ == "__main__":
