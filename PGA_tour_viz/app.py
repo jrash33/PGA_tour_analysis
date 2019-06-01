@@ -15,8 +15,8 @@ app = Flask(__name__)
 # db = SQLAlchemy(app)
 
 #ATTEMPT FOR HEROKU DEPLOYMENT#########################
-app.config['MONGODB_URL'] = os.environ.get('mongodb://localhost:27017', '')
-client = pymongo.MongoClient(app)
+MONGODB_URL = os.environ.get('MONGODB_URL')
+client = pymongo.MongoClient(MONGODB_URL)
 db = client.pga_data['collection5']
 # MONGODB_URL = os.environ.get('MONGODB_URL')
 
