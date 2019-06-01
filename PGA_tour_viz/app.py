@@ -25,7 +25,7 @@ client = pymongo.MongoClient(conn)
 db = client.test_db['pga']
 
 #############################################OLD WAY
-# # Create connection variable
+# Create connection variable
 # conn = 'mongodb://localhost:27017'
 
 # # Pass connection to the pymongo instance.
