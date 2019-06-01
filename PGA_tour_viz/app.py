@@ -6,6 +6,9 @@ import os
 import ssl
 import json
 
+from flask import Flask
+from flask_pymongo import PyMongo
+
 # create instance of Flask app
 app = Flask(__name__)
 
@@ -14,14 +17,16 @@ app = Flask(__name__)
 # db = SQLAlchemy(app)
 
 #ATTEMPT FOR HEROKU DEPLOYMENT#########################
-MONGODB_URL = os.environ.get("MONGODB_URL")
-client = pymongo.MongoClient(MONGODB_URL)
-db = client.pga_data['collection5']
+# MONGODB_URL = os.environ.get("MONGODB_URL")
+# client = pymongo.MongoClient(MONGODB_URL)
+# db = client.pga_data['collection5']
 #######################################################
 # MONGODB_URL = os.environ.get("MONGODB_URL")
 # app.config['MONGO_URI'] = MONGODB_URL
 # db = PyMongo(app)
 
+app.config["MONGO_URI"] = os.environ.get("MONGODB_URL")
+db = PyMongo(app)
 
 #############################################OLD WAY
 # # Create connection variable
@@ -42,6 +47,7 @@ def pga_data():
 
 @app.route("/data")
 def data():
+    db = db["collection5"]
     pga_data_all = db.find()
     player_intro = []
     for player in pga_data_all:
