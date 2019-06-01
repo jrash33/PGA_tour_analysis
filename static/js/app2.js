@@ -64,11 +64,17 @@ d3.json(url).then(function(data){
                     +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 50){
                 var accuracy_avg_var = "40%-50%"}
             else if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 > 50 &&
-                    +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 60){
-                var accuracy_avg_var = "50%-60%"}   
+                    +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 55){
+                var accuracy_avg_var = "50%-55%"}
+            else if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 >= 55 &&
+                +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 60){
+                var accuracy_avg_var = "55%-60%"}   
             else if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 > 60 &&
-                    +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 70){
-                var accuracy_avg_var = "60%-70%"}
+                    +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 65){
+                var accuracy_avg_var = "60%-65%"}
+            else if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 >= 65 &&
+                +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 70){
+                var accuracy_avg_var = "65%-70%"}
             else if (+d['Fairways Hit'] / +d['Possible Fairways'] * 100 > 70 &&
                     +d['Fairways Hit'] / +d['Possible Fairways'] * 100 <= 80){
                 var accuracy_avg_var = "70%-80%"}
@@ -574,7 +580,7 @@ d3.json(url).then(function(data){
 
     //test filter
     //////////////////////////
-    console.log("FINAL!!");
+    console.log("FINAL");
     // test1 = "Trahan, D.J.";
     // test2 = "2016";
     // url="https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_52372.png"
