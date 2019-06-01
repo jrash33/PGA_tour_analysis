@@ -1,0 +1,1 @@
+web: gunicorn PGA_tour_viz.app:app

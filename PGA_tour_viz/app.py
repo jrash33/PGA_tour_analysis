@@ -2,20 +2,31 @@
 from flask import Flask, render_template, redirect, jsonify
 # Import our pymongo library, which lets us connect our Flask app to our Mongo database.
 import pymongo
+import os
+import ssl
 
 import json
 
 # create instance of Flask app
 app = Flask(__name__)
 
-# Create connection variable
-conn = 'mongodb://localhost:27017'
+#ATTEMPT FOR HEROKU DEPLOYMENT#########################
+MONGODB_URL = os.environ.get('mongodb://localhost:27017')
 
-# Pass connection to the pymongo instance.
-client = pymongo.MongoClient(conn)
+client = pymongo.MongoClient(MONGODB_URL)
 
-# connect database collection
-db = client.pga_data["collection5"]
+db = client.pga_data['collection5']
+
+#############################################OLD WAY
+# # Create connection variable
+# conn = 'mongodb://localhost:27017'
+
+# # Pass connection to the pymongo instance.
+# client = pymongo.MongoClient(conn)
+
+# # connect database collection
+# db = client.pga_data["collection5"]
+################################################
 
 # create route that renders index.html template
 @app.route("/")
