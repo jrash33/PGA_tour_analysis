@@ -15,7 +15,6 @@ from pymongo import MongoClient
 app = Flask(__name__)
 
 
-
 # Create connection variable
 conn = 'mongodb://localhost:27017'
 
