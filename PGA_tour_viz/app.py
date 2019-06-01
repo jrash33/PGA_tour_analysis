@@ -4,7 +4,6 @@ from flask import Flask, render_template, redirect, jsonify
 import pymongo
 import os
 import ssl
-from flask.ext.pymongo import PyMongo
 import json
 
 # create instance of Flask app
@@ -21,7 +20,7 @@ db = client.pga_data['collection5']
 #######################################################
 MONGODB_URL = os.environ.get("MONGODB_URL")
 app.config['MONGO_URI'] = MONGODB_URL
-db = PyMongo(app)
+db = pymongo(app)
 
 
 #############################################OLD WAY
