@@ -10,12 +10,18 @@ import json
 # create instance of Flask app
 app = Flask(__name__)
 
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '') or "sqlite:///db.sqlite"
+# db = SQLAlchemy(app)
+
 #ATTEMPT FOR HEROKU DEPLOYMENT#########################
-MONGODB_URL = os.environ.get('MONGODB_URL')
+app.config['MONGODB_URL'] = os.environ.get('mongodb://localhost:27017', '')
+db = pymongo.MongoClient(app)
+# MONGODB_URL = os.environ.get('MONGODB_URL')
 
-client = pymongo.MongoClient(MONGODB_URL)
+# client = pymongo.MongoClient(MONGODB_URL)
 
-db = client.pga_data['collection5']
+# db = client.pga_data['collection5']
 
 #############################################OLD WAY
 # # Create connection variable
