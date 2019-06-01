@@ -18,9 +18,9 @@ MONGODB_URL = os.environ.get("MONGODB_URL")
 client = pymongo.MongoClient(MONGODB_URL)
 db = client.pga_data['collection5']
 #######################################################
-MONGODB_URL = os.environ.get("MONGODB_URL")
-app.config['MONGO_URI'] = MONGODB_URL
-db = pymongo(app)
+# MONGODB_URL = os.environ.get("MONGODB_URL")
+# app.config['MONGO_URI'] = MONGODB_URL
+# db = PyMongo(app)
 
 
 #############################################OLD WAY
