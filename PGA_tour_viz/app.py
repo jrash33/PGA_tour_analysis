@@ -11,7 +11,7 @@ import json
 app = Flask(__name__)
 
 #ATTEMPT FOR HEROKU DEPLOYMENT#########################
-MONGODB_URL = os.environ.get('mongodb://localhost:27017')
+MONGODB_URL = os.environ.get('MONGODB_URL')
 
 client = pymongo.MongoClient(MONGODB_URL)
 
