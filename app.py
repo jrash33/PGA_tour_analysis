@@ -5,35 +5,18 @@ import pymongo
 import os
 import ssl
 import json
-from pymongo import MongoClient
-
-#from flask import Flask
-#from flask_pymongo import PyMongo
-#from flask_sqlalchemy import SQLAlchemy
 
 # create instance of Flask app
 app = Flask(__name__)
 
-
-# Create connection variable
+#Create connection variable
 conn = 'mongodb://localhost:27017'
 
 # Pass connection to the pymongo instance.
 client = pymongo.MongoClient(conn)
 
 # connect database collection
-db = client.test_db['pga']
-
-#############################################OLD WAY
-# Create connection variable
-# conn = 'mongodb://localhost:27017'
-
-# # Pass connection to the pymongo instance.
-# client = pymongo.MongoClient(conn)
-
-# # connect database collection
-# db = client.pga_data['collection5']
-################################################
+db = client.pga_data['collection5']
 
 # create route that renders index.html template
 @app.route("/")
