@@ -1,7 +1,6 @@
 //read in data from flask app
 var url = "/data"
 //var url = "pga_data.json"
-console.log(url)
 
 // Use d3 to select the panel with id of `#sample-metadata`
 var testdata = d3.select('#test');
@@ -12,8 +11,6 @@ testdata.html("");
 //call json data
 d3.json(url).then(function(data){
 //d3.json(url, function(data){
-    console.log(data)
-
     
     //data is nested so we need to flatten the performance data
     player_intro = [];
