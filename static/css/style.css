@@ -1,6 +1,6 @@
 #numberd{
   background: orange;
-  width: 400px;
+  width: 350px;
   font-size: 128px;
   text-align: center;
   padding-top: 63px;
@@ -14,7 +14,7 @@
 
 #numbera{
   background: orange;
-  width: 400px;
+  width: 350;
   font-size: 128px;
   text-align: center;
   padding-top: 63px;
@@ -59,7 +59,7 @@
 }
 
 .card-body{
-  width: 1600px;
+  width: 1300px;
   margin: 3;
 }
 

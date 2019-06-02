@@ -1,6 +1,5 @@
 //read in data from flask app
 var url = "/data"
-//var url = "pga_data.json"
 
 // Use d3 to select the panel with id of `#sample-metadata`
 var testdata = d3.select('#test');
@@ -10,12 +9,11 @@ testdata.html("");
 
 //call json data
 d3.json(url).then(function(data){
-//d3.json(url, function(data){
     
     //data is nested so we need to flatten the performance data
-    player_intro = [];
+    var player_intro = [];
     var stats = [];
-    tournament_history = [];
+    var tournament_history = [];
 
     //add name key/value to each dict nested inside list and push dict to stats list
     data.forEach(function(d){
@@ -34,14 +32,6 @@ d3.json(url).then(function(data){
             tournament_history.push(d3)
         })
     })
-    console.log('tournament history')
-    console.log(tournament_history)
-    
-    console.log('url')
-    console.log(player_intro)
-
-    console.log('unfiltered original data')
-    console.log(stats)
 
     //edit data set
     new_data = []
@@ -99,9 +89,6 @@ d3.json(url).then(function(data){
         }
     })
 
-    console.log('new filtered data')
-    console.log(new_data)
-
 
     //get unique player names: long way for now
     const unique = (value, index, self) => {
@@ -109,8 +96,7 @@ d3.json(url).then(function(data){
     }
     name_test = name_test.filter(unique).sort()
 
-
-    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
    // crossfilter
     var ndx = crossfilter(new_data);
 
@@ -123,9 +109,8 @@ d3.json(url).then(function(data){
     var yearDim = ndx.dimension(d => d.year);
     var distanceDim = ndx.dimension(d => d.distance_avg);
     var playerDim = ndx.dimension(d => d.name);
-    var accgroupDim = ndx.dimension(d => d.accuracy_group)
+    var accgroupDim = ndx.dimension(d => d.accuracy_group);
 
-    
     //GROUPS
     var yearGroup = yearDim.group()
     var playerGroup = playerDim.group()
@@ -134,76 +119,32 @@ d3.json(url).then(function(data){
     var accgroupGroup = accgroupDim.group()
 
     // CHARTS
-
     var yearChart = dc.barChart("#plot")
     var distanceChart = dc.barChart("#distance")
     var accgroupChart = dc.pieChart('#pie')
-    //var finalChart = dc.lineChart('#line')
     var compChart = dc.compositeChart('#line2')
     var nasdaqTable = dc.dataTable('.dc-data-table');
     var nasdaqCount = dc.dataCount('.dc-data-count');
     var number_dis = dc.numberDisplay('#numberd')
     var number_acc = dc.numberDisplay('#numbera')
-    //var testrow = dc.rowChart('#row_chart')
 
 
-
-// /////////////////////////////////////////////////////////////////////////
-    // var ndx = crossfilter(...)
-    // var dim = ndx.dimension(...)
-    // var group = dim.group(...) ... 
-
-    // var filtered_group = remove_empty_bins(group) // or filter_bins, or whatever
-
-    // chart.dimension(dim)
-    //     .group(filtered_group)
-    //     ...
-    
-
-    // function remove_empty_bins(source_group) {
-    //     function non_zero_pred(d) {
-    //         //return Math.abs(d.value) > 0.00001; // if using floating-point numbers
-    //         return d.value !== 0; // if integers only
-    //     }
-    //     return {
-    //         all: function () {
-    //             return source_group.all().filter(non_zero_pred);
-    //         },
-    //         top: function(n) {
-    //             return source_group.top(10)
-    //                 .filter(non_zero_pred)
-    //                 .slice(0, n);
-    //         }
-    //     };
-    // }
-
-    function top_bins(source_group) {
-        return {
-            all: function () {
-                return source_group.top(10);}
-        };
-    }
-
-    // var filteredGroup = remove_empty_bins(distanceGroup)
-
-
+    //pie chart to filter by fairway accuracy percentage
     accgroupChart
-      .width(400)
+      .width(300)
       .height(250)
       .dimension(accgroupDim)
       .group(accgroupGroup)
       .innerRadius(40)
     
-
+    //bar plot to filter by driving distance
     distanceChart
-        .width(1050)
+        .width(850)
         .height(300)
         .dimension(distanceDim)
         .group(distanceGroup)
         .x(d3.scaleLinear().domain([230,330]))
         .y(d3.scaleLinear().domain([0,10]))       
-        //.elasticY(true)
-        //.elasticX(true)
         .centerBar(true)
         .gap(6)
         .xAxisLabel('Driving Distance (yds)')
@@ -211,82 +152,22 @@ d3.json(url).then(function(data){
         .margins({top: 10, right: 26, bottom: 50, left: 50})
         .round(dc.round.floor)
 
-
+    //bar plot to filter by year
     yearChart
-        .width(1600)
+        .width(1300)
         .height(150)
         .dimension(yearDim)
         .group(yearGroup)
-        .x(d3.scaleTime().domain([new Date(1979, 0, 0), new Date(2020, 0, 0)]))  
-        //.x(d3.scale.ordinal().domain(date)) // Need empty val to offset first value
-        //.xUnits(dc.units.ordinal)      
+        .x(d3.scaleTime().domain([new Date(1979, 0, 0), new Date(2020, 0, 0)]))     
         .elasticY(true)
-        //.elasticX(true)
         .centerBar(true)
-        .gap(-30)
+        .gap(-25)
         .xAxisLabel('Year')
         .yAxisLabel('# Players')
         .margins({top: 10, right: 26, bottom: 50, left: 50})
     
 
-     var bla2 = playerDim.group().reduceSum(function (d) {
-        return d.distance_avg;
-    });
-
-    var bla3 = playerDim.group().reduceSum(function (d) {
-        return d.accuracy_avg;
-    });
-
-    
-    
-    // function reduceAdd(p, v) {
-    //     p.distance_avg = p.distance_avg + v.distance_avg;
-    //     p.accuracy_avg = p.accuracy_avg + v.accuracy_avg;
-    //     p.count = p.count + 1;
-    //     p.d_avg = p.distance_avg / p.count;
-    //     p.a_avg = p.accuracy_avg / p.count;
-    //     return p;
-    // }
-    // function reduceRemove(p, v) {
-    //     p.distance_avg = p.distance_avg - v.distance_avg;
-    //     p.accuracy_avg = p.accuracy_avg - v.accuracy_avg;
-    //     p.count = p.count - 1;
-    //     p.d_avg = p.distance_avg / p.count;
-    //     p.a_avg = p.accuracy_avg / p.count;
-    //     return p;
-    // }
-    // function reduceInitial() {
-    //     return {
-    //         distance_avg: 0,
-    //         accuracy_avg: 0,
-    //         count: 0
-    //     };
-    // }
-
-    
-    // // var bla = distanceDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
-    // var bla = playerDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
-    // //console.log('bla')
-    // //console.log(bla.all())
-    
-
-    function order_group(group, order) {
-        return {
-            all: function() {
-                var g = group.all(), map = {};
-             
-                g.forEach(function(kv) {
-                    map[kv.key] = kv.value;
-                });
-                return order.map(function(k) {
-                    return {key: k, value: map[k]};
-                });
-            }
-        };
-    };
-
-    var filteredGroup = order_group(bla2)
-
+    //reduce/add/mean functions to filter data again
     function reduceAdd(p, v) {
         ++p.count;
         p.d_total += v.distance_avg;
@@ -305,30 +186,31 @@ d3.json(url).then(function(data){
         return {count: 0, d_total: 0, a_total: 0};
         }
 
+    //function to remove empty bins
     function remove_empty_bins(source_group) {
         return {
             all:function () {
                 return source_group.all().filter(function(d) {
-                    //return Math.abs(d.value) > 0.00001; // if using floating-point numbers
                     return d.value !== 0; // if integers only
                 });
             }
         };
     }
 
+    //apply reduction functions to player dimension to build line chart
     var group_reduce2 = playerDim.group().reduce(reduceAdd, reduceRemove, reduceInitial);
     var group_reduce3 = remove_empty_bins(group_reduce2)
    
  
+    //composite chart to show average accuracy and distance of each player
     compChart
-        .width(1600)
+        .width(1300)
         .height(250)
         .transitionDuration(1000)
         .margins({top: 0, right: 50, bottom: 40, left: 25})
         .dimension(playerDim)
         .mouseZoomable(false)
         .shareTitle(false)
-        //.x(d3.scaleTime().domain([new Date(1979, 0, 0), new Date(2020, 0, 0)])) 
         .x(d3.scaleBand().domain(playerDim.group().all().map(function(d){return d['key']}))) // Need empty val to offset first value
         .xUnits(dc.units.ordinal)   
         .y(d3.scaleLinear().domain([0,100]))
@@ -360,12 +242,10 @@ d3.json(url).then(function(data){
         .xAxisLabel('Players')
         .rightYAxisLabel("Distance Average")
         .renderHorizontalGridLines(true)
-        //.margins().bottom = -5;
-        
-        
 
 
-    nasdaqCount /* dc.dataCount('.dc-data-count', 'chartGroup'); */
+    //display records filtered and reset option
+    nasdaqCount 
         .crossfilter(ndx)
         .groupAll(all)
         .html({
@@ -373,12 +253,11 @@ d3.json(url).then(function(data){
                 ' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'>Reset All</a></h1><hr>',
             all: '<h1> All records selected. Please click on the graph to apply filters.</h1><hr><br>'
         });
-        //<h3 class="text-center">Thumbnails</h3>
 
-    
-    nasdaqTable /* dc.dataTable('.dc-data-table', 'chartGroup') */
+
+    //table to filter top players by distance
+    nasdaqTable 
         .dimension(distanceDim)
-        // .section(d => {amazing.push(d.name)})
         .columns([
             'name',
             {
@@ -398,29 +277,11 @@ d3.json(url).then(function(data){
         });
 
 
-   
-//////////////////////////////////////////////////////////////////////////////////////////
-    // function reduceAdd(p, v) {
-    // ++p.count;
-    // p.d_total += v.distance_avg;
-    // p.a_total += v.accuracy_avg;
-    // return p;
-    // }
-
-    // function reduceRemove(p, v) {
-    // --p.count;
-    // p.d_total -= v.distance_avg;
-    // p.a_total -= v.accuracy_avg;
-    // return p;
-    // }
-
-    // function reduceInitial() {
-    // return {count: 0, d_total: 0, a_total: 0};
-    // }
-
+    //apply reduce functions to all data
     var group_reduce = ndx.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial);
 
 
+    //average distance number display of filtered data
     number_dis
         .formatNumber(d3.format(".3s"))
         .group(group_reduce)
@@ -428,43 +289,26 @@ d3.json(url).then(function(data){
             return p.count ? p.d_total / p.count : 0;
         })
     
-        //.formatNumber(d3.format(".3g"));
-
+    //average accuracy number display of filtered data
     number_acc
         .formatNumber(d3.format(".3s"))
         .group(group_reduce)
         .valueAccessor(function(p) { 
             return p.count ? p.a_total / p.count : 0;
         })
-        //.formatNumber(d3.format(".3g"));
-
-/////////////////////////////////////////////////////////
-    // testrow
-    //     .height(300)
-    //     .width(1000)
-    //     .margins({
-    //         top: 10,
-    //         right: 10,
-    //         bottom: 40,
-    //         left: 10
-    //     })
-    //     //.dimension(playerDim)
-    //     .dimension(playerDim)
-    //     .group(col1DimTotal)
-    //     .valueAccessor(function(p) { 
-    //         return p.value.d_avg;
-    //     })
-    //     .data(function(group){return group.top(10)})
     
     
+    //create event on click of button to display additional stats for top 10 players in crossfilter table    
     d3.select('#download')
         .on('click', function() {
 
         //first clear html
         d3.select("#player_cards").html("");
 
+        //get top 10 by distance to match table
         var data = distanceDim.top(10);
 
+        //get data from table
         data = data.sort(function(a, b) {
             return nasdaqTable.order()(nasdaqTable.sortBy()(a), nasdaqTable.sortBy()(b));
         });
@@ -477,6 +321,7 @@ d3.json(url).then(function(data){
             return row;
         });
 
+        //get all the names and year from the table so that we can match these parameters to original data
         final = []
         data.forEach(function(d){
             final.push({
@@ -484,14 +329,15 @@ d3.json(url).then(function(data){
                 "year": d['Year'],
             })
         })
-        console.log('table names')
-        console.log(final)
 
+        //match table name/data to original data set to get more stats
         final.forEach(function(d){
+
+            //filter parameters from table
             var name = d.name
             var year = d.year
 
-            //player picture
+            //player picture url
             var index_url = player_intro.findIndex(d => d.name == name)
             var pic_url = player_intro[index_url].url
 
@@ -499,10 +345,11 @@ d3.json(url).then(function(data){
                 var pic_url = "https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_29936.png"
             }
 
-            //additional info
+            //find the index of the players/year that we want in data set (stats)
             var index = stats.findIndex(d => d.name == name && d.year == year)
             var additional_info = stats[index]
 
+            //get extra variables that we will display under each player
             wanted_data = ["Club Head Speed","Total Drives","Possible Fwys","Distance from Edge of Fairway","Left Rough Tendency","Right Rough Tendency","Measured Rounds"]
             card_display_data = {}
             for(i=0; i<wanted_data.length; i++){
@@ -512,6 +359,7 @@ d3.json(url).then(function(data){
                 }
             }
 
+            //put new additional data in html format to be called
             function more_stats(d){
                 x=""
                 for (var key in d) {
@@ -520,13 +368,13 @@ d3.json(url).then(function(data){
                 return(x)
             }
 
-            //tournament history
+            //get tournament history for top 10 table players/year
             var tourney = tournament_history.filter(function(d) {
                 return d.name == name;
             })
 
+            //put tournament history data in html form to be called later on
             y=""
-
             for(i=0; i<tourney.length; i++){
                 if(i <= 5){
                 y = y + "<tr><td>"+tourney[i].Date+'</td><td>'+tourney[i]['Tournament Name']+'</td><td>'+
@@ -534,15 +382,7 @@ d3.json(url).then(function(data){
                 }
             }
 
-            console.log(y)
-
-            console.log('url')
-            console.log(pic_url)
-            console.log('additional info')
-            console.log(additional_info)
-            console.log('tourney')
-            console.log(tourney)
-
+            //append top 10 player data to html
             d3.select('#player_cards')
                 .append('div')
                 .attr("id","player_views")
@@ -559,69 +399,13 @@ d3.json(url).then(function(data){
                 + "<div id=player_name class='col-lg-7'><h2>Recent Tournament Play</h2><hr>" + 
                 "<table><tr><th>Date</th><th>Tournament Name</th><th>Total Score</th><th>POS</th></tr>" + y +" </div>"
                 )
-            
         })
-
-        // var index = stats.findIndex(d => d.name == "Woods, Tiger" && d.year == "2004")
-        // console.log(stats[index])
-
-        // var index_tourney = tournament_history.findIndex(d => d.name == "Woods, Tiger")
-        // console.log(tournament_history[index_tourney])
-
-        // var index_tourney = tournament_history.filter(function(d) {
-        //     return d.name == "Woods, Tiger";
-        // })
-        
-        // var index_url = player_intro.findIndex(d => d.name == "Woods, Tiger")
-        // console.log(player_intro[index_url])
 
     });
     
+    //render all plots
     dc.renderAll()
 
-    //test filter
-    //////////////////////////
-    console.log("FINAL");
-    // test1 = "Trahan, D.J.";
-    // test2 = "2016";
-    // url="https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_52372.png"
-    // date_ = "1/11/17";
-    // pos = "T25";
-    // score = "+10";
-    // tourney =  "The Bahamas Great Exuma Classic at Sandals Emerald Bay";
-
-    // var result = stats.filter(d => {
-    //     return d.name == test1 && d.year == test2
-    // })
-
-    // var result2 = tournament_history.filter(d => {
-    //     return d.name == test1
-    // })
-
-    
-    // var result3 = player_intro.filter(d => {
-    //     return d.name == test1
-    // })
-
-    // console.log(result[0])
-    // console.log(result2)
-    // console.log(result3)
-
-    // d3.select('.card-body')
-    //     .append('div')
-    //     .attr("id","player_views")
-    //     .attr("class", "row")
-    //     .html(
-    //         "<div class='col-lg-2'><img src=" + "'" + url + "'" + "width='150'></div>"
-    //     + "<div id=player_name class='col-lg-5'><h2>Additional Info</h2><hr>Player Name:  "+test1+"<br> Year:  " + test2 +"<br></div>"
-    //     + "<div id=player_name class='col-lg-5'><h2>Recent Tournament Play</h2><hr>Player Name:  "+test1+"<br> Year:  " + test2 +"<br></div>"
-    //     )
-    
-
-    //////////////////////////
-
-
-
-
+    console.log("done!");
 });
 
