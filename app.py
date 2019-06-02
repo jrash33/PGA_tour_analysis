@@ -1,10 +1,11 @@
 # import necessary libraries
-from flask import Flask, render_template, redirect, jsonify
+from flask import Flask, render_template, redirect, jsonify, url_for, request
 # Import our pymongo library, which lets us connect our Flask app to our Mongo database.
 import pymongo
 import os
 import ssl
 import json
+import pandas as pd
 
 # create instance of Flask app
 app = Flask(__name__)
@@ -23,6 +24,7 @@ db = client.pga_data['collection5']
 def pga_data():
 
     return render_template("index.html")
+    
 
 @app.route("/data")
 def data():
