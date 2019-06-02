@@ -321,7 +321,7 @@ function init(data, type_swing){
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //MAIN
-d3.csv("swing_test.csv").then(function(data, key) {
+d3.csv("static/js/swing_test.csv").then(function(data, key) {
 
   //start screen to show all data
   default_start = init_range(data, 0, 0)
@@ -357,7 +357,7 @@ d3.csv("swing_test.csv").then(function(data, key) {
   //slider to change markers shown
   sliderStep
       .on('onchange', val => {
-          d3.csv("swing_test.csv").then(function(data, key) {
+          d3.csv("static/js/swing_test.csv").then(function(data, key) {
 
               //refresh data points/lines
               d3.selectAll("path").attr('id','lines').remove();
@@ -393,7 +393,7 @@ var gRange = d3
 
 sliderRange
   .on('onchange', val => {
-    d3.csv("swing_test.csv").then(function(data, key) {
+    d3.csv("static/js/swing_test.csv").then(function(data, key) {
 
       //refresh data points/lines
       d3.selectAll("path").attr('id','lines').remove();

@@ -1,16 +1,17 @@
-#btn_link{
+#btn_link2{
   padding: 10px 24px;
   width: 200px;
-  height: 200px;
+  height: 75px;
   font-size: 30px;
   font-weight: bold;
   position: relative;
-  left: 50px;
+  left: 30px;
+  bottom: -20px;
   text-align: center;
   border: 2px solid red;
 }
 
-#btn_link:hover {
+#btn_link2:hover {
   background-color: rgb(40, 116, 141);
   color: white;
 }

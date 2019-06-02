@@ -102,3 +102,20 @@ tr:first-child th:nth-child(2) {
 tr:first-child th:last-child { 
   border-radius: 0 5px 0 0; 
 }
+
+#btn_link{
+  padding: 10px 24px;
+  width: 200px;
+  height: 200px;
+  font-size: 30px;
+  font-weight: bold;
+  position: relative;
+  left: 50px;
+  text-align: center;
+  border: 2px solid red;
+}
+
+#btn_link:hover {
+  background-color: rgb(40, 116, 141);
+  color: white;
+}

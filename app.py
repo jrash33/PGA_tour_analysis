@@ -24,6 +24,11 @@ db = client.pga_data['collection5']
 def pga_data():
 
     return render_template("index.html")
+
+@app.route("/swing")
+def swing():
+
+    return render_template("swing.html")
     
 
 @app.route("/data")
@@ -35,6 +40,16 @@ def data():
         player_intro.append(player)
 
     return jsonify(player_intro)
+
+@app.route('/', methods=['GET', 'POST'])
+def index_func():
+    if request.method == 'POST':
+        # do stuff when the form is submitted
+        # redirect to end the POST handling
+        # the redirect can be to the same route or somewhere else
+        return redirect(url_for('index'))
+    # show the form, it wasn't submitted
+    return render_template('swing.html')
 
 
 if __name__ == "__main__":
