@@ -207,7 +207,7 @@ d3.json(url).then(function(data){
         .width(1300)
         .height(250)
         .transitionDuration(1000)
-        .margins({top: 0, right: 50, bottom: 40, left: 25})
+        .margins({top: 10, right: 50, bottom: 40, left: 25})
         .dimension(playerDim)
         .mouseZoomable(false)
         .shareTitle(false)
@@ -406,6 +406,6 @@ d3.json(url).then(function(data){
     //render all plots
     dc.renderAll()
 
-    console.log("done!");
+    console.log("done");
 });
 

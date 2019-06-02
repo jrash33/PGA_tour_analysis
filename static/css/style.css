@@ -1,29 +1,29 @@
 #numberd{
   background: orange;
-  width: 350px;
+  width: 325px;
   font-size: 128px;
   text-align: center;
   padding-top: 63px;
   padding-bottom: 63px;
-  height: 350px;
+  height: 325px;
   line-height: normal;
   position: relative;
-  left: 100px;
-  bottom: -40px;
+  left: 30px;
+  bottom: -30px;
 }
 
 #numbera{
   background: orange;
-  width: 350;
+  width: 325px;
   font-size: 128px;
   text-align: center;
   padding-top: 63px;
   padding-bottom: 63px;
-  height: 350px;
+  height: 325px;
   line-height: normal;
   position: relative;
-  left: 50px;
-  bottom: -40px;
+  right: 30px;
+  bottom: -30px;
 }
 
 #numbera:before {
