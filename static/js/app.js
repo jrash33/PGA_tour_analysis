@@ -96,6 +96,8 @@ d3.json(url).then(function(data){
     }
     name_test = name_test.filter(unique).sort()
 
+    console.log(new_data)
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
    // crossfilter
     var ndx = crossfilter(new_data);
